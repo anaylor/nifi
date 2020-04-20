@@ -709,6 +709,12 @@
                 popDownloadWindow("queue_export_csv",csvContent, mimeType, connectionID, 'csv');
             });
 
+            $('#queue-listing-view-all').click(function(evt) {
+              evt.preventDefault();
+              var connection = $('#queue-listing-table').data('connection');
+              performListing(connection, 100000); // max limit of 100,000 flowfiles for sanity
+            });
+
             var queueListingOptions = {
                 forceFitColumns: true,
                 enableTextSelectionOnCells: true,
