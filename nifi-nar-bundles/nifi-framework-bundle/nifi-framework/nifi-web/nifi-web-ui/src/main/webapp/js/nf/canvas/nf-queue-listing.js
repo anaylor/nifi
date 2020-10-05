@@ -664,6 +664,51 @@
               performListing(connection, 100000); // max limit of 100,000 flowfiles for sanity
             });
 
+            // Pulling json from dataview and converting to CSV with delimiter
+            function convertJson(data, delimiter){
+                var json = data.getItems()
+                var fields = Object.keys(json[0])
+                var replacer = function(key, value) { return value === null ? '' : value }
+                var csv = json.map(function(row){
+                    return fields.map(function(fieldName){
+                        return JSON.stringify(row[fieldName], replacer)
+                    }).join(delimiter)
+                })
+                csv.unshift(fields.join(delimiter)) // add header column
+                csv = csv.join('\r\n');
+                return csv;
+            }
+
+            // Prepare the link, set file name and download the file
+            function popDownloadWindow(linkURL, reportData, mimeType, connectionID, extension) {
+                var link = document.getElementById("download_flowfile_summary");
+                var downloadSupported = typeof link.download != 'undefined'; //Checking if html5 download attribute enabled
+                var fileName = 'ff-summary-' + connectionID + "." + extension;
+                if (downloadSupported) {
+                    var DOMURL = self.URL || self.webkitURL || self;
+                    var svg = new Blob([reportData], {type: mimeType});
+                    if (window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveOrOpenBlob(svg, fileName);
+                    } else {
+                        var url = DOMURL.createObjectURL(svg);
+                        link.href = url;
+                        link.download = fileName;
+                        link.click();
+                    }
+                } else {
+                    window.open('data:' + mimeType + encodeURI(reportData));
+                }
+            };
+
+            // Populates flow export function
+            $('#queue_export_csv').click(function(evt) {
+                evt.preventDefault();
+                var mimeType = "text/csv;charset=utf-8,"
+                var connectionID = $('#queue-listing-table').data('connection').id;
+                var csvContent = convertJson(queueListingData, ',');
+                popDownloadWindow("queue_export_csv",csvContent, mimeType, connectionID, 'csv');
+            });
+
             var queueListingOptions = {
                 forceFitColumns: true,
                 enableTextSelectionOnCells: true,
