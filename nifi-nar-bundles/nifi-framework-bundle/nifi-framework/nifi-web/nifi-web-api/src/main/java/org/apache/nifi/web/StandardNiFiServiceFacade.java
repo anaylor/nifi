@@ -2059,6 +2059,26 @@ public class StandardNiFiServiceFacade implements NiFiServiceFacade {
         return listRequest;
     }
 
+    /**
+     * @deprecated use {@link StandardNiFiServiceFacade#createFlowFileListingRequest(String, String, int) createFlowFileListingRequest} instead
+     */
+    @Override
+    @Deprecated
+    public ListingRequestDTO createFlowFileListingRequest(final String connectionId, final String listingRequestId) {
+        final Connection connection = connectionDAO.getConnection(connectionId);
+        final ListingRequestDTO listRequest = dtoFactory.createListingRequestDTO(connectionDAO.createFlowFileListingRequest(connectionId, listingRequestId));
+
+        // include whether the source and destination are running
+        if (connection.getSource() != null) {
+            listRequest.setSourceRunning(connection.getSource().isRunning());
+        }
+        if (connection.getDestination() != null) {
+            listRequest.setDestinationRunning(connection.getDestination().isRunning());
+        }
+
+        return listRequest;
+    }
+
     @Override
     public ProcessorEntity createProcessor(final Revision revision, final String groupId, final ProcessorDTO processorDTO) {
         final RevisionUpdate<ProcessorDTO> snapshot = createComponent(
