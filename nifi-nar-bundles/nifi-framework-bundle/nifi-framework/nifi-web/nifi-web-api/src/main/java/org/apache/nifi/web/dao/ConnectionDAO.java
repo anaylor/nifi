@@ -97,11 +97,17 @@ public interface ConnectionDAO {
     DropFlowFileStatus createFlowFileDropRequest(String id, String dropRequestId);
 
     /**
+     * @deprecated use {@link ConnectionDAO#createFlowFileListingRequest(String, String, int) createFlowFileListingRequest(String, String, int)}
+     */
+    @Deprecated
+    ListFlowFileStatus createFlowFileListingRequest(String id, String listingRequestId);
+
+    /**
      * Creates a new flow file listing request.
      *
      * @param id connection id
      * @param listingRequestId listing request id
-     * @param maxRedsults the maximum number of flowfile summary objects to return
+     * @param maxResults the maximum number of flowfile summary objects to return
      * @return The listing request status
      */
     ListFlowFileStatus createFlowFileListingRequest(String id, String listingRequestId, int maxResults);

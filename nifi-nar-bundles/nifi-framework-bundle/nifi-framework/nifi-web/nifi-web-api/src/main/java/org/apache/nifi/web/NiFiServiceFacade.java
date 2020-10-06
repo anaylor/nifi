@@ -790,6 +790,12 @@ public interface NiFiServiceFacade {
      */
     ListingRequestDTO createFlowFileListingRequest(String connectionId, String listingRequestId, int maxResults);
 
+
+    /**
+     * @deprecated use {@link NiFiServiceFacade#createFlowFileListingRequest(String, String, int)} createFlowFileListingRequest(String, String, int)
+     */
+    @Deprecated
+    ListingRequestDTO createFlowFileListingRequest(String connectionId, String listingRequestId);
     /**
      * Gets a new flow file listing request.
      *
