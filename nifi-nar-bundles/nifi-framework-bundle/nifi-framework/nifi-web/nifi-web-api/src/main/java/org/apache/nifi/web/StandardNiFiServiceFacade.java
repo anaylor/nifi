@@ -82,7 +82,6 @@ import org.apache.nifi.controller.flow.FlowManager;
 import org.apache.nifi.controller.label.Label;
 import org.apache.nifi.controller.leader.election.LeaderElectionManager;
 import org.apache.nifi.controller.queue.ListFlowFileStatus;
-import org.apache.nifi.controller.queue.ListFlowFileStatus;
 import org.apache.nifi.controller.repository.FlowFileEvent;
 import org.apache.nifi.controller.repository.FlowFileEventRepository;
 import org.apache.nifi.controller.repository.claim.ContentDirection;
@@ -2046,9 +2045,10 @@ public class StandardNiFiServiceFacade implements NiFiServiceFacade {
     }
 
     @Override
-    public ListingRequestDTO createFlowFileListingRequest(final String connectionId, final String listingRequestId) {
+    public ListingRequestDTO createFlowFileListingRequest(final String connectionId, final String listingRequestId, final int maxResults) {
         final Connection connection = connectionDAO.getConnection(connectionId);
-        final ListingRequestDTO listRequest = dtoFactory.createListingRequestDTO(connectionDAO.createFlowFileListingRequest(connectionId, listingRequestId));
+        final ListFlowFileStatus listFlowFileStatus = connectionDAO.createFlowFileListingRequest(connectionId, listingRequestId, maxResults);
+        final ListingRequestDTO listRequest = dtoFactory.createListingRequestDTO(listFlowFileStatus);
 
         // include whether the source and destination are running
         if (connection.getSource() != null) {
